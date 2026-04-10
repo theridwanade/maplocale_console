@@ -16,7 +16,7 @@ import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/store/useAuthStore";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { toast } from "sonner";
 
 interface LoginResponse {
@@ -31,13 +31,12 @@ interface LoginResponse {
   };
 }
 
-export default function Login() {
+function LoginForm() {
   const [credentials, setCredentials] = useState({ email: "", password: "" });
   const [submitting, setSubmitting] = useState(false);
   const router = useRouter();
   const searchParams = useSearchParams();
   const { setUser } = useAuthStore();
-
   const redirectPath = searchParams.get("redirect") || "/dashboard";
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -53,7 +52,6 @@ export default function Login() {
         toast.error("Invalid email or password.");
         return;
       }
-
       toast.error(getErrorMessage(error, "Login failed. Please try again."));
       console.error("Login failed:", error);
     } finally {
@@ -61,6 +59,57 @@ export default function Login() {
     }
   };
 
+  return (
+    <form onSubmit={handleSubmit}>
+      <div className="mb-4">
+        <Label htmlFor="email" className="mb-2">
+          Email
+        </Label>
+        <Input
+          id="email"
+          type="email"
+          placeholder="Enter your email address john@maplocale.tech"
+          value={credentials.email}
+          onChange={(e) =>
+            setCredentials({ ...credentials, email: e.target.value })
+          }
+        />
+      </div>
+      <div className="mb-4">
+        <Link
+          href="/forgot-password"
+          className={cn(buttonVariants({ variant: "link" }), "float-end")}
+        >
+          Forgot Password?
+        </Link>
+        <Label htmlFor="password" className="mb-2">
+          Password
+        </Label>
+        <Input
+          id="password"
+          type="password"
+          placeholder="Enter your password"
+          value={credentials.password}
+          onChange={(e) =>
+            setCredentials({ ...credentials, password: e.target.value })
+          }
+        />
+      </div>
+      <Button className="w-full" type="submit" disabled={submitting}>
+        {submitting ? (
+          <>
+            <Spinner className="mr-2" />
+            Logging in...
+          </>
+        ) : (
+          "Login"
+        )}
+      </Button>
+    </form>
+  );
+}
+
+export default function Login() {
   return (
     <div className="flex justify-center items-center h-screen mx-5">
       <Card className="w-full max-w-100">
@@ -73,52 +122,9 @@ export default function Login() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit}>
-            <div className="mb-4">
-              <Label htmlFor="email" className="mb-2">
-                Email
-              </Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="Enter your email address john@maplocale.tech"
-                value={credentials.email}
-                onChange={(e) =>
-                  setCredentials({ ...credentials, email: e.target.value })
-                }
-              />
-            </div>
-            <div className="mb-4">
-              <Link
-                href="/forgot-password"
-                className={cn(buttonVariants({ variant: "link" }), "float-end")}
-              >
-                Forgot Password?
-              </Link>
-              <Label htmlFor="password" className="mb-2">
-                Password
-              </Label>
-              <Input
-                id="password"
-                type="password"
-                placeholder="Enter your password"
-                value={credentials.password}
-                onChange={(e) =>
-                  setCredentials({ ...credentials, password: e.target.value })
-                }
-              />
-            </div>
-            <Button className="w-full" type="submit" disabled={submitting}>
-              {submitting ? (
-                <>
-                  <Spinner className="mr-2" />
-                  Logging in...
-                </>
-              ) : (
-                "Login"
-              )}
-            </Button>
-          </form>
+          <Suspense fallback={<Spinner />}>
+            <LoginForm />
+          </Suspense>
         </CardContent>
       </Card>
     </div>
