@@ -31,7 +31,7 @@ export default function RootLayout({
         jetbrainsMono.variable,
       )}
     >
-      <body className="min-h-full flex flex-col">
+      <body>
         <TooltipProvider>{children}</TooltipProvider>
         <Toaster />
       </body>
