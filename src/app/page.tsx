@@ -1,3 +1,5 @@
 export default function App() {
-  return <div>Hello, from MapLocale!</div>;
+  return (
+    <div className="flex justify-center items-center h-screen">MapLocale!</div>
+  );
 }
