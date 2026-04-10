@@ -63,7 +63,7 @@ const buildSyntheticProgressivePath = (params: {
 };
 
 export default function Dashboard() {
-  const { user } = useAuthStore();
+  const { user, fetchUser } = useAuthStore();
   const router = useRouter();
   const {
     isSessionActive,
@@ -114,6 +114,7 @@ export default function Dashboard() {
   }, [addPoint]);
 
   useEffect(() => {
+    fetchUser()
     return () => {
       clearPolling();
     };

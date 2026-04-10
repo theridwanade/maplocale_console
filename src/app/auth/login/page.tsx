@@ -36,7 +36,7 @@ function LoginForm() {
   const [submitting, setSubmitting] = useState(false);
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { setUser } = useAuthStore();
+  const { setUser, fetchUser } = useAuthStore();
   const redirectPath = searchParams.get("redirect") || "/dashboard";
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -45,6 +45,7 @@ function LoginForm() {
     try {
       const data = await api.post<LoginResponse>("/auth/login", credentials);
       setUser(data.user);
+      await fetchUser(); // Fetch updated user information
       router.push(redirectPath);
       toast.success("Login successful.");
     } catch (error) {
