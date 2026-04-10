@@ -150,7 +150,7 @@ const parseSuccessPayload = async <T>(
 };
 
 export const createApiClient = (config?: ApiClientConfig) => {
-  const baseUrl = config?.baseUrl ?? import.meta.env.VITE_PUBLIC_API_URL ?? "";
+  const baseUrl = config?.baseUrl ?? process.env.NEXT_PUBLIC_API_URL ?? "";
   const defaultCredentials = config?.credentials ?? "include";
   const defaultHeaders = config?.defaultHeaders;
 
